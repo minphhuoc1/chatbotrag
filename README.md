@@ -14,9 +14,6 @@ Một trợ lý ảo AI giúp tra cứu và giải đáp thắc mắc về Luậ
 - **Embeddings:** sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
 - **Interface:** Streamlit
 
-## 📸 Demo
-(Bạn chụp ảnh màn hình giao diện lúc chat thành công và dán vào đây)
-
 ## ⚙️ Cài đặt & Chạy
 1. Clone repo này về máy.
 2. Tạo file `.env` và điền `GOOGLE_API_KEY`.
