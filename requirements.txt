@@ -1,8 +1,10 @@
 langchain
 langchain-google-genai
 langchain-community
+langchain-core
 chromadb
 pypdf
 streamlit
 python-dotenv
 tiktoken
+sentence-transformers
