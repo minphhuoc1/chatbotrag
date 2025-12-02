@@ -4,11 +4,8 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
 from dotenv import load_dotenv
-
-# Import Chain (Cách import chuẩn cho v0.3.0)
-from langchain.chains import create_retrieval_chain
-from langchain.chains.combine_documents import create_stuff_documents_chain
 
 # 1. Load Config
 load_dotenv()
@@ -44,15 +41,14 @@ def load_chain():
         ("human", "{input}"),
     ])
     
-    # Tạo Chain
-    question_answer_chain = create_stuff_documents_chain(llm, prompt)
-    rag_chain = create_retrieval_chain(retriever, question_answer_chain)
+    # Tạo Chain LCEL (không dùng create_retrieval_chain)
+    rag_chain = prompt | llm | StrOutputParser()
     
-    return rag_chain
+    return rag_chain, retriever
 
 # Khởi tạo chain
 try:
-    rag_chain = load_chain()
+    rag_chain, retriever = load_chain()
     st.success("✅ Đã kết nối thành công với bộ não AI!")
 except Exception as e:
     st.error(f"Lỗi khởi động: {e}")
@@ -74,16 +70,21 @@ if user_input := st.chat_input("Nhập câu hỏi của bạn..."):
     with st.chat_message("assistant"):
         with st.spinner("Đang suy nghĩ..."):
             try:
-                response = rag_chain.invoke({"input": user_input})
-                answer = response["answer"]
+                # Lấy documents từ retriever
+                documents = retriever.invoke(user_input)
+                context_text = "\n\n".join(doc.page_content for doc in documents)
+                
+                # Gọi chain với context
+                answer = rag_chain.invoke({"input": user_input, "context": context_text})
                 st.markdown(answer)
-                # [DEBUG CODE] - Thêm đoạn này
+                
+                # [DEBUG CODE]
                 print(f"\nQUERY: {user_input}")
                 print("-" * 30)
-                for i, doc in enumerate(response["context"]):
-                    print(f"DOC {i+1} (Page {doc.metadata.get('page')}): {doc.page_content[:150]}...") # In 150 ký tự đầu
+                for i, doc in enumerate(documents):
+                    print(f"DOC {i+1} (Page {doc.metadata.get('page')}): {doc.page_content[:150]}...")
                 print("-" * 30)
-                # -----------------------------
+                # -----
                 st.session_state.messages.append({"role": "assistant", "content": answer})
             except Exception as e:
                 st.error(f"Lỗi xử lý: {e}")
