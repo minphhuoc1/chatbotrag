@@ -1,0 +1,5 @@
+venv/
+.env
+__pycache__/
+vector_db/
+.DS_Store
