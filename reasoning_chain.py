@@ -147,17 +147,20 @@ class LegalReasoningEngine:
 
     def _remove_chinese_characters(self, text: str) -> str:
         """
-        Remove CJK (Chinese, Japanese Kanji, Korean) characters from text.
-        Regex pattern matches Unicode range U+4E00-U+9FFF (CJK Unified Ideographs).
+        Remove CJK (Chinese, Japanese Kanji, Korean) characters and punctuation from text.
+        Regex pattern matches:
+        - U+3000-U+303F (CJK Symbols and Punctuation: ，。（）etc)
+        - U+4E00-U+9FFF (CJK Unified Ideographs)
+        - U+FF00-U+FFEF (Halfwidth and Fullwidth Forms: fullwidth punctuation)
         
         Args:
-            text: Input text that may contain CJK characters
+            text: Input text that may contain CJK characters or punctuation
             
         Returns:
-            Text with CJK characters removed (preserves spaces and other characters)
+            Text with CJK characters and punctuation removed (preserves spaces and ASCII)
         """
-        # Remove CJK Unified Ideographs (U+4E00-U+9FFF)
-        cleaned = re.sub(r'[\u4e00-\u9fff]+', '', text)
+        # Remove CJK Symbols/Punctuation + CJK Ideographs + Fullwidth Forms
+        cleaned = re.sub(r'[\u3000-\u303f\u4e00-\u9fff\uff00-\uffef]+', '', text)
         # Clean up multiple spaces
         cleaned = re.sub(r' +', ' ', cleaned)
         return cleaned.strip()
