@@ -15,6 +15,15 @@ Hugging Face Space public port 7860
 
 ## Create The Space
 
+Option A - CLI/script deployment:
+
+```powershell
+$env:HF_TOKEN='hf_xxx'
+python scripts\deploy_hf_space.py --repo-id <username-or-org>/<space-name>
+```
+
+Option B - manual deployment:
+
 1. Create a new Hugging Face Space.
 2. Select `Docker` as the SDK.
 3. Connect this GitHub repo or push the same files to the Space repo.
