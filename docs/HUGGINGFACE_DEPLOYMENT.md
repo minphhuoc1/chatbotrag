@@ -2,6 +2,12 @@
 
 This repo supports a single-container Hugging Face Space that keeps the current Next.js UI.
 
+Current production demo:
+
+```text
+https://minphhuoc-lexbotvn.hf.space
+```
+
 ## Runtime Layout
 
 ```text
@@ -19,7 +25,7 @@ Option A - CLI/script deployment:
 
 ```powershell
 $env:HF_TOKEN='hf_xxx'
-python scripts\deploy_hf_space.py --repo-id <username-or-org>/<space-name>
+python scripts\deploy_hf_space.py --repo-id minphhuoc/lexbotvn
 ```
 
 You can also place `HF_TOKEN=hf_xxx` in local `.env`; `.env` is ignored by Git.

@@ -16,6 +16,8 @@ LexBot là chatbot RAG tư vấn Bộ luật Lao động Việt Nam 2019. Projec
 
 ## Demo Status
 
+- Live demo: https://minphhuoc-lexbotvn.hf.space
+- Hugging Face Space: https://huggingface.co/spaces/minphhuoc/lexbotvn
 - Backend: FastAPI + LangChain + ChromaDB
 - Frontend: Next.js + Tailwind CSS
 - LLM provider: Groq API
@@ -196,6 +198,12 @@ LEGAL_CHATBOT_PHOENIX_ENABLED=false
 ```
 
 See `docs/HUGGINGFACE_DEPLOYMENT.md` for the full deployment checklist.
+
+Current public Space:
+
+```text
+https://minphhuoc-lexbotvn.hf.space
+```
 
 ## Portfolio Notes
 

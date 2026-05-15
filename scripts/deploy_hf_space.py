@@ -77,7 +77,7 @@ def main() -> int:
     parser.add_argument(
         "--repo-id",
         required=True,
-        help="Hugging Face Space repo id, e.g. username/lexbot-vietnam-labor-law",
+        help="Hugging Face Space repo id, e.g. minphhuoc/lexbotvn",
     )
     parser.add_argument("--private", action="store_true", help="Create/update a private Space.")
     parser.add_argument(
