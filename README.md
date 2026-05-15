@@ -10,9 +10,18 @@ pinned: false
 
 # LexBot - Vietnam Labor Law RAG Assistant
 
-LexBot là chatbot RAG tư vấn Bộ luật Lao động Việt Nam 2019. Project tập trung vào retrieval có kiểm soát, citation theo điều luật, guard chống hallucination, multi-turn memory và demo UI chuyên nghiệp bằng Next.js.
+Legal chatbots often stop at semantic search: they retrieve passages that look relevant but miss latent legal logic such as limitation periods, contract-ending categories, and statutory exceptions. LexBot upgrades that baseline into a controlled legal-reasoning RAG pipeline where issue routing, hybrid retrieval, policy guards, and citation validation work together before the final answer is returned. The current QA gate passes `33/33` legal cases with a `97.27` average weighted score, including fact-pattern cases for disciplinary limitation periods, fixed-term contract expiry versus unilateral termination, and exceptions to advance-notice obligations. The live demo runs a Next.js interface over a FastAPI RAG backend deployed on Hugging Face Spaces.
 
 > Lưu ý: Đây là project demo kỹ thuật/portfolio, không thay thế tư vấn pháp lý chính thức.
+
+## What This Project Demonstrates
+
+- Legal-reasoning RAG: built a pipeline that turns realistic labor-law situations into legal issues before retrieval, so the bot does not rely only on surface-level semantic similarity.
+- Prompt engineering with policy guards: designed system prompts and deterministic safeguards that force grounded answers, scoped legal citations, and clarification when the facts are insufficient.
+- Hybrid retrieval engineering: combined vector retrieval, lexical matching, article-number routing, reranking, and metadata boosts to improve recall on Vietnamese legal text.
+- Production-style application architecture: separated the AI backend from the user interface using FastAPI, Next.js, typed API payloads, and a Docker-based deployment path.
+- Evaluation discipline: built a 33-case QA suite scoring retrieval, grounding, policy behavior, and reasoning separately; added fact-pattern cases after discovering that simple internal tests missed complex legal failures.
+- Deployment readiness: packaged the system for Hugging Face Spaces with a prebuilt Chroma vector DB, runtime secrets, health checks, and a public demo URL suitable for recruiter review.
 
 ## Demo Status
 
@@ -29,16 +38,16 @@ LexBot là chatbot RAG tư vấn Bộ luật Lao động Việt Nam 2019. Projec
 - Multi-turn context test: `5/5 PASS`
 - Held-out raw legal cases: đã bổ sung để kiểm tra generalization
 
-## Core Capabilities
+## Key Engineering Decisions
 
-- Trả lời câu hỏi pháp luật lao động bằng RAG có citation.
-- Phân biệt route: RAG, quote direct, article resolution, rule-based fallback, clarification.
-- Citation display tách `Điều chính` và `Dẫn chiếu`.
-- Guard cho điều luật ngoài phạm vi, ví dụ Điều 250.
-- Guard cho các tình huống sa thải, bỏ việc, đơn phương chấm dứt.
-- Module tính trợ cấp thôi việc theo Điều 46.
-- Multi-turn memory cho các câu hỏi nối tiếp.
-- QA framework gồm internal rubric, regression tests, multi-turn tests và third-party QA runner.
+- Controlled legal issue spotting: addresses the failure mode where semantic search retrieves the right topic but misses hidden legal conditions such as limitation periods or exceptions.
+- Route-aware answering: separates direct article lookup, quote retrieval, RAG reasoning, rule-based fallback, and clarification so each query type receives the safest processing path.
+- Primary versus secondary citations: prevents the UI from presenting cross-references as the main legal basis by separating `primary_cited_articles` from `cross_references`.
+- Out-of-scope article guard: prevents confident hallucination for invalid article requests such as `Điều 250` when the active labor-law corpus only supports valid article ranges.
+- High-risk labor-law guards: handles dismissal, abandonment, unilateral termination, pregnancy protection, and notice-period exceptions with targeted policy checks before final reasoning.
+- Deterministic severance helper: handles severance-pay calculation patterns with explicit statutory assumptions instead of leaving arithmetic-heavy cases entirely to the LLM.
+- Multi-turn context carry: preserves legally relevant facts across follow-up questions so the analyzer can retrieve based on the whole conversation, not only the latest short message.
+- QA-first workflow: treats every new failure as a regression candidate by adding targeted tests, held-out cases, and multi-turn checks instead of patching one prompt answer at a time.
 
 ## Architecture
 
@@ -77,7 +86,7 @@ docs/                                 Technical notes, handoff, deployment docs
 ### 1. Backend
 
 ```powershell
-cd D:\chatbotrag
+cd chatbotrag
 $env:PYTHONUTF8='1'
 python -m uvicorn api_server:app --host 127.0.0.1 --port 8007
 ```
@@ -97,7 +106,7 @@ Expected shape:
 ### 2. Frontend
 
 ```powershell
-cd D:\chatbotrag\frontend
+cd chatbotrag\frontend
 npm run dev
 ```
 
@@ -204,14 +213,3 @@ Current public Space:
 ```text
 https://minphhuoc-lexbotvn.hf.space
 ```
-
-## Portfolio Notes
-
-This project is intended to demonstrate:
-
-- RAG system design for Vietnamese legal NLP.
-- Prompt engineering and guarded legal reasoning.
-- Hybrid retrieval and deterministic policy fallback.
-- Production-style API/frontend separation.
-- Evaluation discipline: regression tests, held-out cases, multi-turn tests and QA gates.
-- Deployable AI application architecture.
