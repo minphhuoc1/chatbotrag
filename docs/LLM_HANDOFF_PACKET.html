@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ChatbotRAG - LLM Handoff Packet</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: #121a2b;
+      --panel-2: #0f1727;
+      --text: #e6edf7;
+      --muted: #9db0cc;
+      --ok: #2ecc71;
+      --warn: #f1c40f;
+      --err: #ff6b6b;
+      --line: #21304d;
+      --chip: #1b2740;
+      --accent: #4da3ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font: 14px/1.5 ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text);
+      background: radial-gradient(1200px 600px at 20% -10%, #1a2b4f, var(--bg));
+    }
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 22px; }
+    h1, h2, h3 { margin: 0 0 10px; line-height: 1.25; }
+    h1 { font-size: 28px; }
+    h2 { font-size: 18px; margin-top: 8px; }
+    h3 { font-size: 14px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+    p { margin: 8px 0; color: var(--muted); }
+    a { color: #8ec5ff; text-decoration: none; }
+    .hero, .panel {
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    .hero { padding: 18px; }
+    .sub { color: var(--muted); margin-top: 4px; }
+    .grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(4, minmax(150px, 1fr));
+    }
+    .card {
+      background: #0d1628;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+    }
+    .k { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+    .v { margin-top: 4px; font-size: 18px; font-weight: 700; }
+    .ok { color: var(--ok); }
+    .warn { color: var(--warn); }
+    .err { color: var(--err); }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .chip {
+      background: var(--chip);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 12px;
+      color: #c8d6ec;
+    }
+    .cols {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 1.2fr .8fr;
+    }
+    .list { margin: 0; padding-left: 18px; }
+    .list li { margin: 5px 0; color: #d7e3f6; }
+    .muted { color: var(--muted); }
+    .bar {
+      margin-top: 6px;
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: #1a2742;
+      overflow: hidden;
+      border: 1px solid #22345a;
+    }
+    .fill {
+      height: 100%;
+      background: linear-gradient(90deg, #3db4ff, #52f1b3);
+    }
+    .timeline {
+      display: grid;
+      gap: 10px;
+    }
+    .tl {
+      border-left: 2px solid #35507f;
+      padding-left: 10px;
+      margin-left: 4px;
+    }
+    .tl b { color: #d8e7ff; }
+    .cmd {
+      background: #0a1323;
+      border: 1px solid #243655;
+      border-radius: 10px;
+      padding: 10px;
+      overflow: auto;
+      white-space: pre-wrap;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      color: #cde1ff;
+    }
+    .btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    button {
+      border: 1px solid #32558b;
+      background: #13305a;
+      color: #e9f2ff;
+      border-radius: 8px;
+      padding: 7px 11px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 12px;
+    }
+    button:hover { filter: brightness(1.12); }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 8px 10px;
+      background: #0d1729;
+      margin-top: 8px;
+    }
+    summary { cursor: pointer; color: #d4e5ff; font-weight: 600; }
+    .small { font-size: 12px; color: var(--muted); }
+    @media (max-width: 980px) {
+      .grid { grid-template-columns: repeat(2, minmax(120px, 1fr)); }
+      .cols { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>LLM Handoff Packet</h1>
+      <p class="sub">
+        Project: <b>chatbotrag</b> · Purpose: transfer exact project state across agent sessions/CLIs without losing execution intent.
+      </p>
+      <div class="chips">
+        <span class="chip">self-contained html</span>
+        <span class="chip">human + machine readable</span>
+        <span class="chip">resume-ready prompt</span>
+        <span class="chip">report-grounded</span>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Current Snapshot</h2>
+      <div class="grid">
+        <div class="card">
+          <div class="k">UI Smoke (latest)</div>
+          <div class="v ok">PASS 8/8</div>
+          <div class="small">reports/ui_smoke/ui_smoke_20260514_020028.json</div>
+        </div>
+        <div class="card">
+          <div class="k">Regression tests</div>
+          <div class="v ok">12 PASS</div>
+          <div class="small">policy + retrieval + app structured flow targeted suite</div>
+        </div>
+        <div class="card">
+          <div class="k">Legal QA (last full run)</div>
+          <div class="v ok">30 PASS · 0 FAIL</div>
+          <div class="small">reports/legal_qa/legal_qa_full_demo_green_final_20260514.json</div>
+        </div>
+        <div class="card">
+          <div class="k">Third-party</div>
+          <div class="v warn">TruLens enabled · Ragas isolated runtime pending</div>
+          <div class="small">precision@k=0.46 · ndcg@k=1.0 (latest available)</div>
+        </div>
+      </div>
+      <div style="margin-top:10px" class="small">
+        Important: Groq free-tier TPD/TPM still affects strict full-gate timing.
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Delta Since Last Packet (2026-05-14)</h2>
+      <ul class="list">
+        <li>Reached demo green gate: real LLM legal QA 30/30 pass, average weighted score 97.0.</li>
+        <li>Fixed multi-turn context carry into analyzer and retrieval for clarification/follow-up flows.</li>
+        <li>Added citation repair for inline invalid article references when context proves the target article.</li>
+        <li>Hardened empty reasoner output retry/fallback and legal runaway detection.</li>
+        <li>Validated end-to-end in Streamlit UI smoke: 8/8 pass after wage-arrears guardrail fix.</li>
+      </ul>
+    </section>
+
+    <section class="cols">
+      <div class="panel">
+        <h2>What Was Completed</h2>
+        <ul class="list">
+          <li>Retrieval P0/P1: strategy router, hybrid lexical+semantic, deterministic article branch, reranker/metadata boost.</li>
+          <li>Ingest pipeline quality: OpenDataLoader JSON integration and improved structure-aware parsing.</li>
+          <li>Reasoning/policy: clarify-first guardrails, failure-cause taxonomy, citation contract + repair flow.</li>
+          <li>Intent hardening: strict off-topic guard and safer legal follow-up carry behavior.</li>
+          <li>Follow-up reasoning patch: rule-based unpaid wage handling to prevent over-reject in multi-turn chat.</li>
+          <li>Model error handling: non-empty fallback on reasoner exceptions/rate limit bursts.</li>
+          <li>Benchmarks: before/after P0/P1 and multi-run aggregate reports.</li>
+          <li>QA hardening: retry/backoff, quota-aware pass handling, cooldown-driven gate orchestration.</li>
+          <li>UI smoke automation: Streamlit AppTest scripted flow with report + log artifact output.</li>
+          <li>Handoff readiness: progress map and machine-friendly project packet format updated with latest delta.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h2>Main Blockers</h2>
+        <ul class="list">
+          <li>Groq free-tier token limits (TPM + TPD) intermittently block full strict runs.</li>
+          <li>Ragas dependency/runtime conflicts in mixed Python environment.</li>
+          <li>Vendor-path mode for third-party stack can be unstable on this machine.</li>
+        </ul>
+        <h3 style="margin-top:12px">Risk Heat</h3>
+        <div class="small">Quota volatility</div>
+        <div class="bar"><div class="fill" style="width:92%"></div></div>
+        <div class="small" style="margin-top:7px">Core logic regression risk</div>
+        <div class="bar"><div class="fill" style="width:24%"></div></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Architecture Orientation (continuation entry points)</h2>
+      <ul class="list">
+        <li><code>src/legal_chatbot/retrieval.py</code>: runtime retriever build + retrieval orchestration.</li>
+        <li><code>src/legal_chatbot/reasoning_chain.py</code>: legal reasoning engine, analyzer/reasoner flow, context compaction.</li>
+        <li><code>src/legal_chatbot/policy.py</code>: mode detection, retrieval strength checks, grounding/citation policies.</li>
+        <li><code>src/legal_chatbot/intent.py</code>: intent classification with context-carry logic.</li>
+        <li><code>scripts/qa_gate_runner.py</code>: end-to-end gate, cooldowns, quota-skip behavior.</li>
+        <li><code>scripts/third_party_qa_runner.py</code>: third-party evaluation integration.</li>
+      </ul>
+    </section>
+
+    <section class="cols">
+      <div class="panel">
+        <h2>Next Actions (ordered)</h2>
+        <div class="timeline">
+          <div class="tl">
+            <b>P0 - Expand UI smoke to 15-20 novel cases</b>
+            <p>Add new memory/off-topic/ambiguous-fact/rate-limit-adjacent scenarios and keep pass artifacts.</p>
+          </div>
+          <div class="tl">
+            <b>P1 - Re-run strict QA gate after quota reset</b>
+            <p>Run full gate with quota-skip disabled to produce clean final evaluation artifacts.</p>
+          </div>
+          <div class="tl">
+            <b>P2 - Isolate Ragas runtime</b>
+            <p>Create a dedicated venv for Ragas-only execution; avoid shared runtime conflicts.</p>
+          </div>
+          <div class="tl">
+            <b>P3 - Export demo-ready pack</b>
+            <p>Bundle benchmark, QA, third-party metrics, and architecture summary for portfolio/CV presentation.</p>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>Runbook Commands</h2>
+        <div class="cmd">python ingest.py
+python qa_test.py
+python e2e_test.py
+python test_legal_qa.py
+python scripts/ui_smoke_streamlit_apptest.py
+python scripts/qa_gate_runner.py
+python scripts/third_party_qa_runner.py</div>
+        <details>
+          <summary>Strict gate mode (after quota reset)</summary>
+          <div class="cmd"># PowerShell
+$env:QA_GATE_ALLOW_QUOTA_SKIP='0'
+python scripts/qa_gate_runner.py</div>
+        </details>
+        <details>
+          <summary>Third-party metrics-only from existing legal report</summary>
+          <div class="cmd"># PowerShell example
+$env:THIRD_PARTY_SOURCE_REPORT='reports/legal_qa/legal_qa_report_20260512_133547.json'
+$env:ENABLE_RAGAS='0'
+$env:ENABLE_TRULENS='1'
+python scripts/third_party_qa_runner.py</div>
+        </details>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Resume in Another CLI</h2>
+      <p>
+        Use the buttons below to copy a resume prompt or the machine JSON payload, then paste into another CLI/model.
+      </p>
+      <div class="btns">
+        <button id="copyResume">Copy Resume Prompt</button>
+        <button id="copyJson">Copy Handoff JSON</button>
+      </div>
+      <details open>
+        <summary>Resume prompt preview</summary>
+        <div class="cmd" id="resumePrompt"></div>
+      </details>
+      <details>
+        <summary>Machine payload preview (JSON)</summary>
+        <div class="cmd" id="jsonPreview"></div>
+      </details>
+    </section>
+
+    <section class="panel">
+      <h2>Data Sources Used</h2>
+      <ul class="list">
+        <li>reports/legal_qa/legal_qa_full_demo_green_final_20260514.json</li>
+        <li>reports/ui_smoke/ui_smoke_20260514_020028.json</li>
+        <li>reports/ui_smoke/ui_smoke_20260514_020028.log</li>
+        <li>reports/multi_turn/multi_turn_mock_llm_20260514_020028.json</li>
+        <li>reports/route_distribution/route_distribution_mock_llm_20260514_015756.json</li>
+        <li>reports/qa/qa_report_36.txt</li>
+        <li>reports/qa/e2e_report_22.txt</li>
+        <li>reports/diagnostics/diagnostic_sprint_20260512_140600.json</li>
+        <li>reports/third_party/third_party_eval_20260512_135404.json</li>
+      </ul>
+      <p class="small">
+        Last packet refresh: 2026-05-14.
+      </p>
+    </section>
+  </div>
+
+  <script id="handoff-json" type="application/json">
+{
+  "packet_version": "2026-05-14.1",
+  "project": "chatbotrag",
+  "goal": "Production-grade legal RAG chatbot with stable QA and transferable execution context.",
+  "status": {
+    "ui_smoke_latest": {
+      "path": "reports/ui_smoke/ui_smoke_20260514_020028.json",
+      "summary": "PASS 8/8",
+      "log_path": "reports/ui_smoke/ui_smoke_20260514_020028.log"
+    },
+    "regression_tests_latest": {
+      "command": "python -m pytest tests/test_policy_dynamic_hints.py tests/test_policy_unilateral_compensation.py tests/test_retrieval_p1.py tests/test_app_structured_flow.py -q",
+      "summary": "12 passed"
+    },
+    "qa_report": {
+      "path": "reports/qa/qa_report_36.txt",
+      "summary": "23 PASS | 0 FAIL | 0 WARN"
+    },
+    "e2e_report": {
+      "path": "reports/qa/e2e_report_22.txt",
+      "summary": "16 PASS | 0 FAIL | 0 WARN"
+    },
+    "diagnostic": {
+      "path": "reports/diagnostics/diagnostic_sprint_20260512_140600.json",
+      "summary": {
+        "total_cases": 36,
+        "full_pass_cases": 35,
+        "failed_cases": 1,
+        "root_cause": "prompt"
+      }
+    },
+    "legal_qa_last_full": {
+      "path": "reports/legal_qa/legal_qa_full_demo_green_final_20260514.json",
+      "summary": {
+        "passed_cases": 30,
+        "failed_cases": 0,
+        "average_weighted_score": 97.0
+      }
+    },
+    "multi_turn_latest": {
+      "path": "reports/multi_turn/multi_turn_mock_llm_20260514_020028.json",
+      "summary": "5/5 passed"
+    },
+    "route_distribution_latest": {
+      "path": "reports/route_distribution/route_distribution_mock_llm_20260514_015756.json",
+      "summary": "rag 19/30, deterministic/fallback routes 11/30"
+    },
+    "third_party_latest": {
+      "path": "reports/third_party/third_party_eval_20260512_135404.json",
+      "metrics": {
+        "trulens_enabled": true,
+        "precision_at_k": 0.46,
+        "ndcg_at_k": 1.0
+      }
+    }
+  },
+  "major_completed_work": [
+    "Retrieval P0/P1 implementation and hardening",
+    "OpenDataLoader JSON ingest integration",
+    "Citation-grounded legal reasoning guardrails",
+    "Intent off-topic/context-carry hardening",
+    "Deterministic follow-up handling for unpaid wage scenarios",
+    "Reasoner 429/non-empty fallback protection",
+    "Inline citation repair and legal runaway false-positive reduction",
+    "Demo green gate: Legal QA 30/30 and UI smoke 8/8",
+    "UI smoke automation + route verification",
+    "Benchmarks before/after P0/P1",
+    "QA gate reliability improvements under API rate limits"
+  ],
+  "active_blockers": [
+    "Groq free-tier TPM/TPD exhaustion causes intermittent 429 failures.",
+    "Ragas runtime is unstable in current mixed dependency environment."
+  ],
+  "key_files": [
+    "src/legal_chatbot/retrieval.py",
+    "src/legal_chatbot/reasoning_chain.py",
+    "src/legal_chatbot/policy.py",
+    "src/legal_chatbot/intent.py",
+    "src/legal_chatbot/llm_factory.py",
+    "scripts/qa_gate_runner.py",
+    "scripts/third_party_qa_runner.py",
+    "qa_test.py",
+    "e2e_test.py",
+    "test_legal_qa.py"
+  ],
+  "next_actions": [
+    {
+      "id": "P0",
+      "title": "Package demo portfolio",
+      "definition_of_done": "README/demo docs include architecture, final QA artifacts, commands, and curated demo questions."
+    },
+    {
+      "id": "P1",
+      "title": "Curate repo artifacts",
+      "definition_of_done": "Bulky local caches/vector DBs are excluded from publish path and representative reports are kept."
+    },
+    {
+      "id": "P2",
+      "title": "Expand UI smoke coverage",
+      "definition_of_done": "15-20 novel scenarios run via scripts/ui_smoke_streamlit_apptest.py with PASS artifacts."
+    },
+    {
+      "id": "P3",
+      "title": "Isolate Ragas runtime",
+      "definition_of_done": "Dedicated venv executes third_party_qa_runner with Ragas enabled and no crash."
+    }
+  ],
+  "resume_prompt": "Load docs/LLM_HANDOFF_PACKET.html. Use its handoff JSON as authoritative state. Current demo gate is green: legal QA 30/30, UI smoke 8/8, multi-turn 5/5. Continue from next_actions[0] (P0: package demo portfolio). Do not repeat completed retrieval/ingest work. Keep artifacts in reports/ and update this packet + docs/PROGRESS_MINDMAP.md after each milestone."
+}
+  </script>
+  <script>
+    (function () {
+      const payload = JSON.parse(document.getElementById("handoff-json").textContent);
+      const pretty = JSON.stringify(payload, null, 2);
+      const resume = payload.resume_prompt;
+
+      const jsonPreview = document.getElementById("jsonPreview");
+      const resumePrompt = document.getElementById("resumePrompt");
+      jsonPreview.textContent = pretty;
+      resumePrompt.textContent = resume;
+
+      function copyText(text) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          return navigator.clipboard.writeText(text);
+        }
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        return Promise.resolve();
+      }
+
+      document.getElementById("copyJson").addEventListener("click", function () {
+        copyText(pretty);
+      });
+      document.getElementById("copyResume").addEventListener("click", function () {
+        copyText(resume);
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+held_out_cases:
+  - id: HO_01
+    query: "Người lao động có quyền đơn phương chấm dứt hợp đồng mùa vụ không?"
+    expected_articles: ["35"]
+    note: "hợp đồng theo mùa vụ — edge case không được hint"
+
+  - id: HO_02
+    query: "Thời gian thử việc có được tính vào thâm niên để tính trợ cấp không?"
+    expected_articles: ["24", "46"]
+    note: "giao thoa thử việc và trợ cấp — chưa có hint nào"
+
+  - id: HO_03
+    query: "Công ty có được phép khấu trừ tiền lương để bồi thường thiệt hại không?"
+    expected_articles: ["102"]
+    note: "Điều 102 chưa xuất hiện trong bất kỳ test case nào"
+
+  - id: HO_04
+    query: "Người lao động nước ngoài làm việc tại Việt Nam có áp dụng luật lao động Việt Nam không?"
+    expected_articles: ["151"]
+    note: "Điều 151 — chủ đề ít phổ biến, kiểm tra generalization"
+
+  - id: HO_05
+    query: "Hợp đồng lao động bằng lời nói có hiệu lực không?"
+    expected_articles: ["14"]
+    note: "Điều 14 — câu hỏi đơn giản nhưng Điều chưa được hint"
+
+  - id: FP-01
+    query: "Nhân viên A đi làm muộn 5 lần trong tháng 3 (nội quy công ty ghi đi muộn 3 lần là khiển trách). Đến tháng 5, công ty mới phát hiện ra và muốn gộp cả lỗi đi muộn tháng 3 và lỗi làm sai quy trình trong tháng 5 để sa thải. Hỏi công ty làm vậy đúng hay sai? Tại sao?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [123, 122, 125]
+    must_not_hallucinate: true
+    note: "Phải phân tích thời hiệu, nguyên tắc không gộp lỗi và căn cứ sa thải"
+
+  - id: FP-02
+    query: "Chị B đang mang thai tháng thứ 7. Hợp đồng lao động xác định thời hạn 2 năm của chị sẽ hết hạn vào cuối tháng này. Công ty thông báo sẽ chấm dứt hợp đồng đúng ngày hết hạn vì không có nhu cầu gia hạn. Chị B cho rằng công ty không được đuổi việc phụ nữ mang thai. Ai đúng?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [34, 137]
+    must_not_hallucinate: true
+    note: "Phải phân biệt hết hạn tự nhiên với đơn phương chấm dứt và nêu ngoại lệ gia hạn khi mang thai"
+
+  - id: FP-03
+    query: "Tôi ký hợp đồng không xác định thời hạn. Sáng nay tôi bị sếp mắng vô lý nên tôi viết email xin nghỉ việc ngay lập tức từ ngày mai. Công ty đòi bồi thường nửa tháng tiền lương vì tôi không báo trước 45 ngày. Tôi có phải bồi thường không?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [35, 40]
+    must_not_hallucinate: true
+    note: "Phải xét ngoại lệ Điều 35.2.c trước khi kết luận nghĩa vụ bồi thường"
+
+  - id: FP-04
+    query: "Nhân viên nghỉ việc không báo trước 45 ngày vì công ty nợ lương 3 tháng. Công ty đòi bồi thường. Ai đúng?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [35, 40, 97]
+    must_not_hallucinate: true
+    note: "Phải nêu Điều 35.2.b về quyền nghỉ ngay khi không được trả lương đúng hạn"
+
+  - id: FP-05
+    query: "Công ty ký hợp đồng 1 năm lần 3 với cùng một nhân viên. Hợp đồng này có giá trị pháp lý gì?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [20]
+    must_not_hallucinate: true
+    note: "Phải nhận ra hợp đồng ký quá 2 lần liên tiếp chuyển thành không xác định thời hạn"
+
+  - id: FP-06
+    query: "Sa thải nhân viên vì đăng bài trên mạng xã hội cá nhân ngoài giờ làm việc. Có hợp pháp không?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [125, 8, 118]
+    must_not_hallucinate: true
+    note: "Phải xét căn cứ sa thải và điều kiện nội quy hợp lệ, không chỉ match từ khóa sa thải"

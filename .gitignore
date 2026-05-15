@@ -1,5 +1,56 @@
-venv/
+# Secrets / local environment
 .env
+.env.*
+!.env.example
+frontend/.env.local
+frontend/.env.*.local
+
+# Python / local dependencies
+venv/
+.venv/
 __pycache__/
-vector_db/
+*.py[cod]
+.pytest_cache/
+pytest-cache-files-*/
+.pip-cache/
+
+# Node / Next.js
+node_modules/
+.next/
+frontend/node_modules/
+frontend/.next/
+*.tsbuildinfo
+
+# Local editor / OS
 .DS_Store
+.vscode/
+.codex/
+
+# Runtime logs and generated reports
+reports/
+artifacts/
+logs/
+tmp/
+tmp_*/
+*.log
+*.tmp
+.tmp_write_test.txt
+
+# Local model/package caches
+.hf_cache*/
+.vendor/
+.tools/
+OllamaSetup.exe
+backup/
+
+# Keep the production demo vector DB, ignore generated comparison/QA snapshots.
+vector_db_*/
+vector_db_qa*/
+vector_db_corrupt_*/
+vector_db_*_parent_index.json
+
+# Generated one-off AI handoff / scratch files
+project_logic_map.md
+tmp_readme.md
+pdf_analysis_report.txt
+0.34.0

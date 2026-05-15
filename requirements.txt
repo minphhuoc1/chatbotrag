@@ -1,10 +1,28 @@
 langchain
-langchain-google-genai
+langchain-ollama
+langchain-huggingface
+langchain-chroma
 langchain-community
 langchain-core
 chromadb
 pypdf
 streamlit
+fastapi
+uvicorn[standard]
 python-dotenv
-tiktoken
 sentence-transformers
+pyyaml
+edge-tts
+opendataloader-pdf
+jdk4py
+numpy<2.0   # chromadb/hnswlib compiled with numpy 1.x — do NOT upgrade to 2.x
+
+# Third-party observability / evaluation (optional but recommended)
+langsmith
+langfuse
+ragas
+datasets
+trulens
+trulens-providers-litellm
+openinference-instrumentation-langchain
+arize-phoenix

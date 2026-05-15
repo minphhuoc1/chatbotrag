@@ -1,0 +1,166 @@
+cases:
+  - id: 1
+    query: "Người lao động được nghỉ phép bao nhiêu ngày một năm?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [113, 114]
+    must_not_hallucinate: true
+  - id: 2
+    query: "Trích nguyên văn Điều 113 Bộ luật Lao động."
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [113]
+    must_not_hallucinate: true
+  - id: 3
+    query: "Điều 35 quy định gì về quyền đơn phương chấm dứt hợp đồng của người lao động?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [35]
+    must_not_hallucinate: true
+  - id: 4
+    query: "Người sử dụng lao động được đơn phương chấm dứt hợp đồng trong trường hợp nào?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [36]
+    must_not_hallucinate: true
+  - id: 5
+    query: "Người lao động nghỉ việc không báo trước thì hậu quả pháp lý gì?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [40]
+    must_not_hallucinate: true
+  - id: 6
+    query: "Kỷ luật sa thải áp dụng trong những trường hợp nào?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [125]
+    must_not_hallucinate: true
+  - id: 7
+    query: "Thời giờ làm việc bình thường tối đa là bao nhiêu?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [105]
+    must_not_hallucinate: true
+  - id: 8
+    query: "Làm thêm giờ bị giới hạn thế nào theo luật lao động?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [107]
+    must_not_hallucinate: true
+  - id: 9
+    query: "Nghỉ lễ tết được nghỉ mấy ngày và có hưởng lương không?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [112]
+    must_not_hallucinate: true
+  - id: 10
+    query: "Nội quy lao động bắt buộc phải có các nội dung gì?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [118]
+    must_not_hallucinate: true
+  - id: 11
+    query: "Mức lương tối thiểu được xác lập theo nguyên tắc nào?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [91]
+    must_not_hallucinate: true
+  - id: 12
+    query: "Tiền lương làm thêm giờ ban đêm tính ra sao?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [98]
+    must_not_hallucinate: true
+  - id: 13
+    query: "Nguyên tắc trả lương cho người lao động là gì?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [94]
+    must_not_hallucinate: true
+  - id: 14
+    query: "Thử việc tối đa bao lâu với công việc cần trình độ đại học?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [25]
+    must_not_hallucinate: true
+  - id: 15
+    query: "Doanh nghiệp có phải ký hợp đồng bằng văn bản với lao động thời vụ không?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [14]
+    must_not_hallucinate: true
+  - id: 16
+    query: "Đối thoại tại nơi làm việc được tổ chức theo quy định nào?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [63]
+    must_not_hallucinate: true
+  - id: 17
+    query: "Đình công hợp pháp cần điều kiện gì?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [198, 199]
+    must_not_hallucinate: true
+  - id: 18
+    query: "Tranh chấp lao động cá nhân giải quyết theo trình tự nào?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [188]
+    must_not_hallucinate: true
+  - id: 19
+    query: "Lao động nữ mang thai có được bảo vệ khi chấm dứt hợp đồng không?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [137]
+    must_not_hallucinate: true
+  - id: 20
+    query: "Người lao động chưa thành niên có được làm ca đêm không?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [146]
+    must_not_hallucinate: true
+  - id: 21
+    query: "Điều 250 quy định gì?"
+    expected_mode: "fallback_refusal"
+    must_reference_any_of: []
+    must_not_hallucinate: true
+  - id: 22
+    query: "Trích nguyên văn Điều 250."
+    expected_mode: "fallback_refusal"
+    must_reference_any_of: []
+    must_not_hallucinate: true
+  - id: 23
+    query: "Tôi nghe nói Điều 999 cho phép sa thải không cần lý do, có đúng không?"
+    expected_mode: "fallback_refusal"
+    must_reference_any_of: []
+    must_not_hallucinate: true
+  - id: 24
+    query: "Cho tôi quote nguyên văn khoản cấm phân biệt đối xử ở Điều 999."
+    expected_mode: "fallback_refusal"
+    must_reference_any_of: []
+    must_not_hallucinate: true
+  - id: 25
+    query: "Điều 35"
+    expected_mode: "fallback_refusal"
+    must_reference_any_of: [35]
+    must_not_hallucinate: true
+  - id: 26
+    query: "Tôi bị công ty xử lý kỷ luật"
+    expected_mode: "fallback_refusal"
+    must_reference_any_of: []
+    must_not_hallucinate: true
+  - id: 27
+    query: "Đi làm trễ 5 phút mỗi ngày có vi phạm luật ngay không?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [118, 124]
+    must_not_hallucinate: true
+  - id: 28
+    query: "Không có hợp đồng lao động bằng văn bản thì có được đòi lương không?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [14, 90]
+    must_not_hallucinate: true
+  - id: 29
+    query: "Trích nguyên văn Điều 35 về đơn phương chấm dứt hợp đồng."
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [35]
+    must_not_hallucinate: true
+  - id: 30
+    query: "Khi nào người sử dụng lao động phải trả trợ cấp thôi việc?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [46]
+    must_not_hallucinate: true
+  - id: 31
+    query: "Nhân viên A đi làm muộn 5 lần trong tháng 3 (nội quy công ty ghi đi muộn 3 lần là khiển trách). Đến tháng 5, công ty mới phát hiện ra và muốn gộp cả lỗi đi muộn tháng 3 và lỗi làm sai quy trình trong tháng 5 để sa thải. Hỏi công ty làm vậy đúng hay sai? Tại sao?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [123, 122, 125]
+    must_not_hallucinate: true
+  - id: 32
+    query: "Chị B đang mang thai tháng thứ 7. Hợp đồng lao động xác định thời hạn 2 năm của chị sẽ hết hạn vào cuối tháng này. Công ty thông báo sẽ chấm dứt hợp đồng đúng ngày hết hạn vì không có nhu cầu gia hạn. Chị B cho rằng công ty không được đuổi việc phụ nữ mang thai. Ai đúng?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [34, 137]
+    must_not_hallucinate: true
+  - id: 33
+    query: "Tôi ký hợp đồng không xác định thời hạn. Sáng nay tôi bị sếp mắng vô lý nên tôi viết email xin nghỉ việc ngay lập tức từ ngày mai. Công ty đòi bồi thường nửa tháng tiền lương vì tôi không báo trước 45 ngày. Tôi có phải bồi thường không?"
+    expected_mode: "grounded_legal_answer"
+    must_reference_any_of: [35, 40]
+    must_not_hallucinate: true

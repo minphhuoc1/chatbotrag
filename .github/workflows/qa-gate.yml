@@ -1,0 +1,71 @@
+name: QA Gate
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+      - master
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  qa-gate:
+    runs-on: self-hosted
+    timeout-minutes: 240
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Locked QA Gate
+        env:
+          PYTHONIOENCODING: utf-8
+          QA_NONINTERACTIVE: "1"
+          HF_LOCAL_FILES_ONLY: "1"
+          HF_HUB_OFFLINE: "1"
+          LANGSMITH_TRACING: "false"
+          LEGAL_CHATBOT_EMBED_DEVICE: cuda
+          LEGAL_CHATBOT_RETRIEVAL_ENABLE_STRATEGY_ROUTER: "1"
+          LEGAL_CHATBOT_RETRIEVAL_ENABLE_LEXICAL: "1"
+          LEGAL_CHATBOT_RETRIEVAL_ENABLE_DETERMINISTIC_ARTICLE_BRANCH: "1"
+          LEGAL_CHATBOT_RETRIEVAL_ENABLE_RERANKER: "1"
+          LEGAL_CHATBOT_RETRIEVAL_ENABLE_METADATA_BOOST: "1"
+          LEGAL_CHATBOT_TOP_K: "4"
+          LEGAL_CHATBOT_REASONER_MAX_CONTEXT_DOCS: "5"
+          LEGAL_CHATBOT_REASONER_MAX_CONTEXT_CHARS: "5000"
+          LEGAL_CHATBOT_REASONER_MAX_TOKENS: "640"
+          LEGAL_CHATBOT_ANALYZER_MAX_TOKENS: "192"
+          LEGAL_CHATBOT_INTENT_MAX_TOKENS: "96"
+          LEGAL_CHATBOT_REASONER_MODEL: llama-3.1-8b-instant
+          LEGAL_CHATBOT_ANALYZER_MODEL: llama-3.1-8b-instant
+          LEGAL_CHATBOT_INTENT_MODEL: llama-3.1-8b-instant
+          LEGAL_CHATBOT_REASONER_FALLBACK_MODEL: llama-3.1-8b-instant
+          LEGAL_CHATBOT_ANALYZER_FALLBACK_MODEL: llama-3.1-8b-instant
+          LEGAL_CHATBOT_INTENT_FALLBACK_MODEL: llama-3.1-8b-instant
+          LEGAL_CHATBOT_QA_DB_PATH: C:\Users\admin\AppData\Local\Temp\chatbotrag_vector_db_qa
+          LEGAL_CHATBOT_DB_PATH: C:\Users\admin\AppData\Local\Temp\chatbotrag_vector_db_qa
+        run: python scripts/qa_gate_runner.py
+
+      - name: Upload Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-reports
+          path: |
+            reports/qa/*.txt
+            reports/legal_qa/*.json
+            reports/diagnostics/*.json
+            reports/diagnostics/*.md

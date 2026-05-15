@@ -1,0 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --porcelain: #F8F6F1;
+    --ink: #1A1A1A;
+    --ink-muted: #5A5A5A;
+    --ink-faint: #9A9A9A;
+    --legal-red: #B5251A;
+    --legal-red-light: #F5E8E7;
+    --teal: #1A5C5A;
+    --teal-light: #E8F3F3;
+    --teal-mid: #2D7D7B;
+    --border: #E2DDD4;
+    --border-strong: #C8C2B6;
+    --surface: #FFFFFF;
+    --surface-raised: #F2EFE9;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    background-color: var(--porcelain);
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Paper texture on body */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.5;
+  }
+}
+
+@layer components {
+  /* ── Typography ────────────────────────────────────────────────────────── */
+  .heading-serif {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .label-legal {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  /* ── Markdown in answers ────────────────────────────────────────────────── */
+  .answer-prose {
+    font-size: 0.9rem;
+    line-height: 1.75;
+    color: var(--ink);
+  }
+
+  .answer-prose strong {
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .answer-prose ul, .answer-prose ol {
+    margin: 0.5rem 0 0.5rem 1.25rem;
+  }
+
+  .answer-prose li {
+    margin-bottom: 0.25rem;
+  }
+
+  .answer-prose p {
+    margin-bottom: 0.75rem;
+  }
+
+  /* ── Scrollbars ─────────────────────────────────────────────────────────── */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--ink-faint); }
+
+  /* ── Typing indicator dots ──────────────────────────────────────────────── */
+  .typing-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--teal-mid);
+    animation: pulseDot 1.4s ease-in-out infinite;
+  }
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes pulseDot {
+    0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+    40%            { transform: scale(1);   opacity: 1;   }
+  }
+}

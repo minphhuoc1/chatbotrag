@@ -1,0 +1,113 @@
+# Multi-turn test cases — Legal Chatbot RAG
+# Mục đích: đo khả năng context carry, disambiguation, clarification flow
+# Chạy qua engine.run_structured với chat_history tích lũy từng turn
+
+cases:
+
+  # ── MT-01: Context carry cơ bản ─────────────────────────────────────────
+  # User cung cấp dữ kiện pháp lý ở turn 1, hỏi hệ quả ở turn 2.
+  # Mong đợi: turn 2 không hỏi lại thông tin đã có, trả lời ngay.
+  - id: MT_01
+    description: "Nợ lương → quyền nghỉ không báo trước"
+    turns:
+      - role: user
+        content: "Công ty tôi nợ lương 2 tháng, chưa trả."
+        expected_route: rag
+        expected_articles: ["97"]
+        must_not_ask_back: false
+
+      - role: user
+        content: "Vậy tôi có thể nghỉ ngay không cần báo trước không?"
+        expected_route_any_of: ["rule_followup", "rag"]
+        expected_articles: ["35", "97"]
+        must_not_ask_back: true
+        must_not_contain: ["bạn có thể cho biết thêm", "bạn đang làm việc ở đâu"]
+        context_carry_check: true
+
+  # ── MT-02: Subject disambiguation ────────────────────────────────────────
+  # Câu hỏi mơ hồ chủ thể → bot phải hỏi lại hoặc trả lời 2 nhánh.
+  # Mong đợi: KHÔNG từ chối, KHÔNG trả lời sai nhánh.
+  - id: MT_02
+    description: "Đơn phương chấm dứt hợp đồng — chủ thể mơ hồ"
+    turns:
+      - role: user
+        content: "Đơn phương chấm dứt hợp đồng trái luật thì bồi thường gì?"
+        expected_route_any_of: ["rag", "clarifying"]
+        must_not_route: ["insufficient_context"]
+        acceptable_behaviors:
+          - "trả lời 2 nhánh NLĐ và NSDLĐ"
+          - "hỏi làm rõ chủ thể"
+        must_not_contain: ["không đủ căn cứ", "không thể trả lời"]
+
+      - role: user
+        content: "Tôi là người lao động, công ty sa thải tôi trái luật."
+        expected_route_any_of: ["rag", "rule_followup"]
+        expected_articles: ["41", "40"]
+        must_not_ask_back: true
+        context_carry_check: true
+
+  # ── MT-03: Clarification flow ─────────────────────────────────────────────
+  # Bot hỏi lại đúng lúc → user trả lời → bot dùng thông tin mới.
+  # Mong đợi: sau khi user cung cấp thêm, bot không hỏi lại nữa.
+  - id: MT_03
+    description: "Kỷ luật lao động — cần thêm dữ kiện"
+    turns:
+      - role: user
+        content: "Tôi bị công ty xử lý kỷ luật."
+        expected_route_any_of: ["rag", "clarifying", "insufficient_context"]
+        note: "câu quá mơ hồ — bot nên hỏi thêm hoặc trả lời khung chung"
+
+      - role: user
+        content: "Công ty ra quyết định sa thải nhưng không thông báo trước, không có họp."
+        expected_route_any_of: ["rag", "rule_followup"]
+        expected_articles: ["122", "125"]
+        must_not_ask_back: true
+        context_carry_check: true
+
+  # ── MT-04: Topic carry qua 3 turns ───────────────────────────────────────
+  # Hội thoại dài — kiểm tra context không bị drop sau 2+ turns.
+  - id: MT_04
+    description: "Hợp đồng thử việc → vi phạm → bồi thường"
+    turns:
+      - role: user
+        content: "Công ty ký hợp đồng thử việc với tôi 3 tháng cho vị trí kỹ sư."
+        expected_route_any_of: ["rag", "clarifying"]
+        note: "thử việc kỹ sư tối đa 60 ngày — đây là vi phạm tiềm năng"
+
+      - role: user
+        content: "Họ vừa thông báo kéo dài thêm 2 tháng nữa."
+        expected_route_any_of: ["rag", "rule_followup"]
+        expected_articles: ["25", "24"]
+        must_not_ask_back: true
+        context_carry_check: true
+
+      - role: user
+        content: "Tôi có thể yêu cầu gì từ công ty?"
+        expected_route_any_of: ["rag", "rule_followup"]
+        expected_articles: ["25", "26"]
+        must_not_ask_back: true
+        context_carry_check: true
+        note: "turn 3 — context từ turn 1+2 phải được dùng"
+
+  # ── MT-05: Off-topic xen giữa legal turns ────────────────────────────────
+  # Kiểm tra intent classifier không bị nhầm khi user nói xen vào.
+  - id: MT_05
+    description: "Off-topic injection giữa hội thoại pháp lý"
+    turns:
+      - role: user
+        content: "Tôi muốn hỏi về quyền lợi khi bị mất việc làm."
+        expected_route: rag
+        expected_articles: ["47", "46"]
+
+      - role: user
+        content: "Cảm ơn bạn."
+        expected_route: intent_non_legal
+        expected_intent: GREETING
+        note: "câu cảm ơn không được route vào RAG"
+
+      - role: user
+        content: "Vậy trợ cấp thôi việc và mất việc làm khác nhau thế nào?"
+        expected_route_any_of: ["rag", "rule_followup"]
+        expected_articles: ["46", "47"]
+        context_carry_check: true
+        note: "sau greeting, hội thoại pháp lý phải tiếp tục được"
