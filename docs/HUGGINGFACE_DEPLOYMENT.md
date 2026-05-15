@@ -22,6 +22,8 @@ $env:HF_TOKEN='hf_xxx'
 python scripts\deploy_hf_space.py --repo-id <username-or-org>/<space-name>
 ```
 
+You can also place `HF_TOKEN=hf_xxx` in local `.env`; `.env` is ignored by Git.
+
 Option B - manual deployment:
 
 1. Create a new Hugging Face Space.
